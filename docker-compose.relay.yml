@@ -1,0 +1,20 @@
+services:
+  relay:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portly-relay
+    restart: unless-stopped
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    env_file:
+      - ./.env
+    volumes:
+      - ./relay_agent.py:/app/relay_agent.py:ro
+      - ./relay_privatekey:/app/relay_privatekey:ro
+      - /etc/wireguard:/etc/wireguard
+      - /lib/modules:/lib/modules:ro
+    command: >
+      sh -c "ip link show wg0 >/dev/null 2>&1 || wg-quick up wg0; exec python -u relay_agent.py"
