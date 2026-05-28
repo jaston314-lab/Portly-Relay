@@ -39,6 +39,7 @@ echo "[1/8] Installing dependencies..."
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y docker.io docker-compose-v2 git wireguard wireguard-tools curl
+apt-get install -y docker-buildx-plugin || true
 systemctl enable --now docker
 
 echo "[2/8] Fetching relay repository..."
@@ -95,7 +96,10 @@ curl -fsSL -X POST "${BRAIN_URL%/}/infra/relay-register" \
 
 echo "[7/8] Starting relay service..."
 cd "$RELAY_DIR"
-docker compose -f docker-compose.relay.yml up -d --build
+# Warm base image pull to avoid metadata stalls on some VPS networks
+docker pull python:3.11-slim || true
+# Force classic builder path for maximum compatibility
+DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker compose -f docker-compose.relay.yml up -d --build
 
 echo "[8/8] Done."
 echo "Relay hostname: $RELAY_HOSTNAME"
