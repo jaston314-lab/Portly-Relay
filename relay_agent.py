@@ -30,7 +30,7 @@ def load_local_env_file(base_dir: str):
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_local_env_file(BASE_DIR)
 
-BRAIN_URL = os.getenv("BRAIN_URL", "http://192.168.1.40:8000")
+BRAIN_URL = os.getenv("BRAIN_URL", "https://api.portly.uk")
 RELAY_HOSTNAME = "portly-relay-01"
 RELAY_SERVICE_KEY = os.getenv("RELAY_SERVICE_KEY")
 RELAY_PRIVATE_KEY_PATH = os.path.join(BASE_DIR, "relay_privatekey")
